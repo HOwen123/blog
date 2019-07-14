@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>闲言轻博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{template "comm/link.html"}}
+</head>
+<body class="lay-blog">
+{{template "comm/head.html" .}}
+<div class="container-wrap">
+    <div class="container">
+        <div class="contar-wrap">
+            <div class="item">
+                <div class="item-box">
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">邮箱</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="email" required lay-verify="required"
+                                       placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" name="password" required lay-verify="required"
+                                       placeholder="请输入密码"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="login">登陆</button>
+                                <a href="/reg" class="layui-btn layui-btn-primary">注册用户</a>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{{template  "comm/foot.html" .}}
+</body>
+<script>
+    //Demo
+    layui.use(['form', 'jquery'], function () {
+        let form = layui.form;
+        $ = layui.jquery;
+        //监听提交
+        form.on('submit(login)', function (rdata) {
+            $.post("/login", rdata.field, function (data) {
+                if (data.code === 0) {
+                    layer.msg("登录成功！");
+                    if (data.action) {
+                        setTimeout(function () {
+                            window.location.href = data.action;
+                        }, 300);
+                    }
+                } else {
+                    layer.msg("登陆失败：" + data.msg);
+                }
+            }, "json").error(function () {
+                layer.msg("网络异常")
+            });
+            return false;
+        });
+    });
+</script>
+</html>
