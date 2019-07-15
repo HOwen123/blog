@@ -1,9 +1,10 @@
 package main
 
 import (
-	"blog/controllers"
+	"blog/models"
 	_ "blog/models"
 	_ "blog/routers"
+	"encoding/gob"
 	"github.com/astaxie/beego"
 	"strings"
 )
@@ -11,7 +12,6 @@ import (
 func main() {
 	initSession()
 	initTemplate()
-	beego.ErrorController(&controllers.ErrorController{})
 	beego.Run()
 }
 
@@ -24,6 +24,7 @@ func initTemplate() {
 }
 
 func initSession(){
+	gob.Register(models.User{})
 	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.BConfig.WebConfig.Session.SessionName = "liteBlog"
 

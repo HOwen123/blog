@@ -11,3 +11,7 @@ type User struct {
 	Role int `gorm: "default:1"` //0为管理员，1代表正常用户
 }
 
+func QueryByEmailAndPwd(email,password string) (user User, err error){
+	return user, db.Where("email = ? and Pwd = ?",email,password).Take(&user).Error
+}
+

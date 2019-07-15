@@ -6,5 +6,7 @@ import (
 )
 
 func init() {
+	beego.ErrorController(&controllers.ErrorController{})
 	beego.Include(&controllers.IndexController{})
+	beego.Include(&controllers.UserController{})
 }
