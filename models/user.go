@@ -11,10 +11,18 @@ type User struct {
 	Role   int `gorm: "default:1"` //0为管理员，1代表正常用户
 }
 
-func (db *DB) QueryByEmailAndPwd(email, password string) (user User, err error) {
-	return user, db.db.Where("email = ? and Pwd = ?", email, password).Take(&user).Error
+func QueryByEmailAndPwd(email, password string) (user User, err error) {
+	return user, db.Where("email = ? and Pwd = ?", email, password).Take(&user).Error
 }
 
-func (db *DB) QueryUserByName(name string) (user User, err error) {
-	return user, db.db.Where("name = ?", name).Take(&user).Error
+func QueryUserByName(name string) (user User, err error) {
+	return user, db.Where("name = ?", name).Take(&user).Error
+}
+
+func QueryUserByEmail(email string) (user User, err error) {
+	return user, db.Where("email = ?", email).Take(&user).Error
+}
+
+func SaveUser(user *User) (error){
+	return db.Create(user).Error
 }
