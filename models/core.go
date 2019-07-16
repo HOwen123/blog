@@ -6,6 +6,22 @@ import (
 	"os"
 )
 
+type DB struct {
+	db *gorm.DB
+}
+
+func (db *DB) Begin(){
+	db.db = db.db.Begin()
+}
+
+func (db *DB) RollBack(){
+	db.db = db.db.Rollback()
+}
+
+func (db *DB) Commit(){
+	db.db = db.db.Commit()
+}
+
 var (
 	db *gorm.DB
 )

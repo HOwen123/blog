@@ -12,6 +12,7 @@ type BaseController struct {
 	beego.Controller
 	user    models.User
 	IsLogin bool
+	Dao *models.DB
 }
 
 func (ctx *BaseController) Prepare() {
