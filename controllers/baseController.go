@@ -2,12 +2,18 @@ package controllers
 
 import (
 	"blog/models"
+	"blog/syserror"
 	"errors"
 	"github.com/astaxie/beego"
-	"liteblog/syserrors"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 const SESSION_USER_KEY = "SESSION_USER_KEY"
+
+type NestPreparer interface {
+	NestPreparer()
+}
 
 type BaseController struct {
 	beego.Controller
@@ -25,6 +31,10 @@ func (ctx *BaseController) Prepare() {
 		ctx.IsLogin = true
 		ctx.Data["User"] = ctx.user
 		ctx.Data["isLogin"] = ctx.IsLogin
+	}
+	ctx.Data["IsLogin"] = ctx.IsLogin
+	if app, ok := ctx.AppController.(NestPreparer); ok {
+		app.NestPreparer()
 	}
 }
 
@@ -54,9 +64,17 @@ func (ctx *BaseController) GetMustString(key, message string) string {
 	return value
 }
 
-
 func (ctx *BaseController) MustLogin() {
 	if !ctx.IsLogin {
-		ctx.Abort500(syserrors.NoUserError{})
+		ctx.Abort500(syserror.NoUserError{})
 	}
+}
+
+func (ctx *BaseController) UUID() string {
+	u, err := uuid.NewV4()
+
+	if err != nil {
+		ctx.Abort500(syserror.New("系统错误！", err))
+	}
+	return u.String()
 }

@@ -10,15 +10,15 @@ type DB struct {
 	db *gorm.DB
 }
 
-func (db *DB) Begin(){
+func (db *DB) Begin() {
 	db.db = db.db.Begin()
 }
 
-func (db *DB) RollBack(){
+func (db *DB) RollBack() {
 	db.db = db.db.Rollback()
 }
 
-func (db *DB) Commit(){
+func (db *DB) Commit() {
 	db.db = db.db.Commit()
 }
 
@@ -39,7 +39,7 @@ func init() {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&User{}, &Note{})
 	//如果数据库里面没用用户数据，我们新增一条admin记录
 	var count int
 	if err := db.Model(&User{}).Count(&count).Error; err == nil && count == 0 {

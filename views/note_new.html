@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>闲言轻博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{template "comm/link.html"}}
+</head>
+<body class="lay-blog">
+{{template "comm/head.html" .}}
+<div class="container-wrap">
+    <div class="container">
+        <div class="contar-wrap">
+                <div class="item">
+                    <div class="item-box">
+                        <form class="layui-form layui-form-pane" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">标题</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="title" required=""
+                                           value=""
+                                           lay-verify="required" placeholder="请输入标题"
+                                           autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">内容</label>
+                                <div class="layui-input-block">
+                                    <div id="edit"></div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <button class="layui-btn" lay-submit=""
+                                        lay-filter="save">提交
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+</div>
+{{template  "comm/foot.html" .}}
+</body>
+<script type="text/javascript" src="../static/lib/wangEditor/wangEditor.js"></script>
+<script>
+    //Demo
+    layui.use(['form', 'jquery'], function () {
+        let form = layui.form;
+        $ = layui.jquery;
+        // 初始化 wangEditor
+        let E = window.wangEditor;
+        let editor = new E('#edit');
+        // 图片不采用上传模式，直接保存到数据库
+        editor.customConfig.uploadImgShowBase64 = true;
+        editor.customConfig.pasteFilterStyle = false;
+        editor.customConfig.zIndex = 1;
+        editor.create();
+        //监听提交
+        form.on('submit(save)', function (rdata) {
+            rdata.field.content=editor.txt.html();
+            $.post("/note/save/{{.key}}", rdata.field, function (data) {
+                if (data.code === 0) {
+                    layer.msg("保存成功！");
+                    if (data.action) {
+                        setTimeout(function () {
+                            window.location.href = data.action;
+                        }, 300);
+                    }
+                } else {
+                    layer.msg("保存失败：" + data.msg);
+                }
+            }, "json").error(function () {
+                layer.msg("网络异常")
+            });
+            return false;
+        });
+    });
+</script>
+</html>
