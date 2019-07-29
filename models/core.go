@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"os"
+	"time"
 )
 
 type DB struct {
@@ -51,4 +52,11 @@ func init() {
 			Role:   0,
 		})
 	}
+}
+
+type Model struct {
+	ID uint `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
 }

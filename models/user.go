@@ -1,12 +1,10 @@
 package models
 
-import "github.com/jinzhu/gorm"
-
 type User struct {
-	gorm.Model
-	Name   string `gorm: "unique_index"`
-	Email  string `gorm: "unique_index"`
-	Pwd    string `json:"-"`
+	Model
+	Name   string `gorm: "unique_index" json:"name"`
+	Email  string `gorm: "unique_index" json:"email"`
+	Pwd    string `json:"-"`//“-”
 	Avatar string `json:avatar`
 	Role   int    `gorm: "default:0" json:"role"` //0为管理员，1代表正常用户
 }
