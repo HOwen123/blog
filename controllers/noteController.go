@@ -90,18 +90,29 @@ func getSummary(content string) (string, error) {
 }
 
 // @router /edit/:key [get]
-func (this *NoteController) EditPage() {
+func (ctx *NoteController) EditPage() {
 	//获取页面传过来的key
-	key := this.Ctx.Input.Param(":key")
+	key := ctx.Ctx.Input.Param(":key")
 	//根据当前文章的key和登陆用户id查询出文章
-	note, err := models.QueryNoteByKeyAndUserId(key, int(this.user.ID))
+	note, err := models.QueryNoteByKeyAndUserId(key, int(ctx.user.ID))
 	if err != nil {
 		//查询有问题，就提示文章不存在
-		this.Abort500(syserror.New("文章不存在！", err))
+		ctx.Abort500(syserror.New("文章不存在！", err))
 	}
 	//将文章的信息以及key传到页面
-	this.Data["note"] = note
-	this.Data["key"] = key
+	ctx.Data["note"] = note
+	ctx.Data["key"] = key
 	//"note_new.html"是文章新增的页面，之前实现文章新增功能使用
-	this.TplName = "note_new.html"
+	ctx.TplName = "note_new.html"
+}
+
+// @router /del/:key [post]
+func (ctx *NoteController) Del() {
+	//获取页面传过来的key值
+	key := ctx.Ctx.Input.Param(":key")
+	//删除
+	if err := models.DeleteNoteByUserIdAndKey(key, int(ctx.user.ID)); err != nil {
+		ctx.Abort500(syserror.New("删除失败", err))
+	}
+	ctx.JsonOK("删除成功", "/")
 }

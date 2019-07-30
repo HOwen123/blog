@@ -7,7 +7,7 @@ import (
 type Note struct {
 	Model
 	Key     string `gorm:"unique_index;not null;" json:"key"`
-	UserID  int     `json:"userId"` //用户Id
+	UserID  int    `json:"userId"` //用户Id
 	User    User   //用户
 	Title   string //文章标题
 	Summary string `gorm:"type:text"` //概要
@@ -35,6 +35,11 @@ func QueryNotesCount(title string) (count int, err error) {
 	return count, db.Model(&Note{}).Where("title like ?", fmt.Sprintf("%%%s%%", title)).Count(&count).Error
 }
 
-func QueryNoteByKey(key string) (note Note,err error){
-	return note, db.Model(&Note{}).Where("Key = ?",key).Take(&note).Error
+func QueryNoteByKey(key string) (note Note, err error) {
+	return note, db.Model(&Note{}).Where("Key = ?", key).Take(&note).Error
+}
+
+func DeleteNoteByUserIdAndKey(key string, userid int) error {
+	return db.Delete(&Note{}, "key=? and user_id=?", key, userid).Error
+
 }

@@ -5,6 +5,19 @@
     <title>闲言轻博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{template "comm/link.html"}}
+
+    <style>
+        .lay-blog ul.pop-nav {
+            z-index: 2000;
+        }
+        .container {
+            margin: 0 auto !important;
+        }
+        .w-e-toolbar {
+            flex-wrap: wrap;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body class="lay-blog">
 {{template "comm/head.html" .}}
@@ -25,10 +38,10 @@
                         </div>
 
                         <div class="layui-form-item layui-form-text">
-                            <label class="layui-form-label">内容</label>
                             <div class="layui-input-block">
-                                <div id="edit"></div>
-                                {{if .note}}{{str2html .note.Content}}{{end}}
+                                <div id="edit" style="background: #ffffff;">
+                                    {{if .note}}{{str2html .note.Content}}{{end}}
+                                </div>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -45,7 +58,7 @@
 </div>
 {{template  "comm/foot.html" .}}
 </body>
-<script type="text/javascript" src="../static/lib/wangEditor/wangEditor.js"></script>
+<script type="text/javascript" src="/static/lib/wangEditor/wangEditor.js"></script>
 <script>
     //Demo
     layui.use(['form', 'jquery'], function () {

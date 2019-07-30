@@ -71,6 +71,21 @@
                         }
                         if (type === 'bar2') {
                             //删除逻辑
+                            $.post("note/del/"+note.key,function (data){
+                                if (data.code === 0){
+                                    layer.msg("删除成功");
+                                    if (data.action){
+                                        setTimeout(function (){
+                                            window.location.href = data.action;
+                                        },300);
+                                    }
+                                } else{
+                                    layer.msg("删除失败："+data.msg)
+                                }
+
+                            },"json").error(function(){
+                               layer.msg("网络异常")
+                            });
                         }
                     }
                 }
