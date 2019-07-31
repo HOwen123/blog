@@ -40,7 +40,7 @@ func init() {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&User{}, &Note{})
+	db.AutoMigrate(&User{}, &Note{}, &Message{})
 	//如果数据库里面没用用户数据，我们新增一条admin记录
 	var count int
 	if err := db.Model(&User{}).Count(&count).Error; err == nil && count == 0 {
@@ -55,8 +55,8 @@ func init() {
 }
 
 type Model struct {
-	ID uint `gorm:"primary_key" json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint       `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
 }

@@ -54,18 +54,26 @@ func (this *IndexController) GetAbout() {
 // @router /details/:key [get]
 func (this *IndexController) GetDetails() {
 	//得到页面传过来的文章的key
-	key:=this.Ctx.Input.Param(":key")
+	key := this.Ctx.Input.Param(":key")
 	//到数据库中根据key查询文章
-	note,err :=models.QueryNoteByKey(key)
-	if err != nil{
-		this.Abort500(syserror.New("文章不存在",err))
+	note, err := models.QueryNoteByKey(key)
+	if err != nil {
+		this.Abort500(syserror.New("文章不存在", err))
 	}
 	this.Data["note"] = note
 	this.TplName = "details.html"
 }
 
-// @router /comment [get]
+// @router /comment/:key [get]
 func (this *IndexController) GetComment() {
+	//得到页面的key
+	key := this.Ctx.Input.Param(":key")
+	//查询文章
+	note, err := models.QueryNoteByKey(key)
+	if err != nil {
+		this.Abort500(syserror.New("文章不存在！", err))
+	}
+	this.Data["note"] = note
 	this.TplName = "comment.html"
 }
 
