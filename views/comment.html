@@ -13,14 +13,14 @@
     <div class="container container-message container-details container-comment">
         <div class="contar-wrap">
             <div class="item">
-               {{template "comm/note_summary_tpl.html" .note}}
+                {{template "comm/note_summary_tpl.html" .note}}
             </div>
             <form class="layui-form" action="">
                 <!-- 传入文章的key-->
                 <input type="hidden" name="key" value="{{.note.Key}}">
                 <!-- 传入的评论内容：content-->
                 <div class="layui-form-item layui-form-text">
-                    <textarea class="layui-textarea" style="resize:none" placeholder="写点什么啊"></textarea>
+                    <textarea name="content" class="layui-textarea" style="resize:none" placeholder="写点什么啊"></textarea>
                 </div>
 
                 <div class="btnbox">
@@ -34,11 +34,23 @@
 </div>
 {{template  "comm/foot.html" .}}
 <script type="text/javascript">
-    layui.use(['form','jquery','layer'],function(){
-        var form = layui.form,$=layui.jquery,layer=layui.layer;
+    layui.use(['form', 'jquery', 'layer'], function () {
+        var form = layui.form, $ = layui.jquery, layer = layui.layer;
         //监听评论的form表单提交事件
-        form.on("submit(comment)",function(formdata){
-
+        form.on("submit(comment)", function (formdata) {
+            $.post("/message/new/" + formdata.field.key, {content: formdata.field.content}, function (data) {
+                if (data.code === 0) {
+                    layer.msg("评论成功！");
+                    setTimeout(function () {
+                        window.location.href = "/details/" + formdata.field.key;
+                    }, 300)
+                } else {
+                    layer.msg(data.msg)
+                }
+            }, "json").error(function () {
+                layer.msg("网络异常")
+            });
+            return false;
         })
     })
 

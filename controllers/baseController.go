@@ -38,16 +38,36 @@ func (ctx *BaseController) Prepare() {
 	}
 }
 
-func (ctx *BaseController) JsonOK(msg string, action string) {
-	//var action string
-	//if len(actions)>0 {
-	//	action = actions[0]
-	//}
-	ctx.Data["json"] = map[string]interface{}{
-		"code":   0,
-		"msg":    msg,
-		"action": action,
+type H map[string]interface{}
+
+type ResultJsonValue struct {
+	Code   int         `json:"code"`
+	Msg    string      `json:"msg"`
+	Action string      `json:"action,omitempty"`
+	Count  int         `json:"count,omitempty"`
+	Data   interface{} `json:"data,omitempty"`
+}
+
+func (ctx *BaseController) JsonOK(msg string, actions ...string) {
+	var action string
+	if len(actions) > 0 {
+		action = actions[0]
 	}
+	ctx.Data["json"] = &ResultJsonValue{
+		Code:   0,
+		Msg:    msg,
+		Action: action,
+	}
+	ctx.ServeJSON()
+}
+
+func (ctx *BaseController) JsonOkH(msg string, maps H) {
+	if maps == nil {
+		maps = H{}
+	}
+	maps["code"] = 0
+	maps["msg"] = msg
+	ctx.Data["json"] = maps
 	ctx.ServeJSON()
 }
 

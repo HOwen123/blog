@@ -57,9 +57,11 @@ func (this *IndexController) GetDetails() {
 	key := this.Ctx.Input.Param(":key")
 	//到数据库中根据key查询文章
 	note, err := models.QueryNoteByKey(key)
+	ms, err := models.QueryMessagesByNoteKey(key)
 	if err != nil {
 		this.Abort500(syserror.New("文章不存在", err))
 	}
+	this.Data["messages"] = ms
 	this.Data["note"] = note
 	this.TplName = "details.html"
 }
@@ -70,9 +72,11 @@ func (this *IndexController) GetComment() {
 	key := this.Ctx.Input.Param(":key")
 	//查询文章
 	note, err := models.QueryNoteByKey(key)
+	ms, err := models.QueryMessagesByNoteKey(key)
 	if err != nil {
 		this.Abort500(syserror.New("文章不存在！", err))
 	}
+	this.Data["messages"] = ms
 	this.Data["note"] = note
 	this.TplName = "comment.html"
 }

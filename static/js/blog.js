@@ -125,26 +125,45 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl', 'sysn'], functio
             return elemCont.focus();
         }
 
-        var view = $('#LAY-msg-tpl').html()
+        $.post("message/new", {content: content}, function (ret) {
+            if (ret.code === 0) {
+                //新增成功，画页面
+               var html = drawMessage(ret.data);
+               $('#LAY-msg-box').prepend(html);
+               elemCont.val('');
+               layer.msg()
 
-            //模拟数据
-            , data = {
-                username: '闲心'
-                , avatar: '../res/static/images/info-img.png'
-                , praise: 0
-                , content: content
-            };
-
-        //模板渲染
-        laytpl(view).render(data, function (html) {
-            $('#LAY-msg-box').prepend(html);
-            elemCont.val('');
-            layer.msg('留言成功', {
-                icon: 1
-            })
+                //模板渲染
+                laytpl(view).render(data, function (html) {
+                    $('#LAY-msg-box').prepend(html);
+                    elemCont.val('');
+                    layer.msg('留言成功', {
+                        icon: 1
+                    })
+                });
+            }else{
+                layer.msg(ret.msg)
+            }
+        }).error(function(){
+            layer.msg("网络异常")
         });
 
     });
+
+    //将留言页面的js代码进行抽象
+    function drawMessage(message) {
+        var view = $('#LAY-msg-tpl').html()
+            //模拟数据
+            , data = {
+                username: message.user.name
+                , avatar: message.avatar || '/static/images/info-img.png'
+                , praise: message.praise
+                , content: message.content
+                , key: message.key
+            };
+        //模板渲染
+        return laytpl(view).render(data)
+    }
 
     // start  图片遮罩
     var layerphotos = document.getElementsByClassName('layer-photos-demo');
@@ -156,16 +175,16 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl', 'sysn'], functio
     }
     // end 图片遮罩
 
-    form.on('submit(login)',function (formdata) {
+    form.on('submit(login)', function (formdata) {
         //发送ajax请求
-        sysn.post("/login",formdata.field)
-            .success(function (data){
+        sysn.post("/login", formdata.field)
+            .success(function (data) {
                 //提示
                 layer.msg(data.msg);
-                if (data.action){
+                if (data.action) {
                     setTimeout(function () {
                         window.location.href = data.action
-                    },300)
+                    }, 300)
                 }
 
             }).run();

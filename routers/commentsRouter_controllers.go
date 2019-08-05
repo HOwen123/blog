@@ -79,6 +79,15 @@ func init() {
 			Filters:          nil,
 			Params:           nil})
 
+	beego.GlobalControllerRouter["blog/controllers:MessageController"] = append(beego.GlobalControllerRouter["blog/controllers:MessageController"],
+		beego.ControllerComments{
+			Method:           "NewMessage",
+			Router:           `/new/?:key`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
+
 	beego.GlobalControllerRouter["blog/controllers:NoteController"] = append(beego.GlobalControllerRouter["blog/controllers:NoteController"],
 		beego.ControllerComments{
 			Method:           "Del",
