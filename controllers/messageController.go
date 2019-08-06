@@ -39,3 +39,34 @@ func (mc *MessageController) NewMessage() {
 	}
 	mc.JsonOkH("保存成功！", H{"data": m})
 }
+
+// @router /count [get]
+func (this *MessageController) Count() {
+	//查询 留言的总数量
+	count, err := models.QueryMessagesCountByNoteKey("")
+	if err != nil {
+		this.Abort500(syserror.New("查询失败!", err))
+	}
+	// 将留言的总数量 返回给前台
+	this.JsonOkH("查询成功", H{"count": count})
+}
+
+// @router /query [get]
+func (this *MessageController) Query() {
+	//获得第几页，默认第一页
+	pageno, err := this.GetInt("pageno", 1)
+	if err != nil || pageno < 1 {
+		pageno = 1
+	}
+	//获得每页显示多少条数据，默认10条
+	pagesize, err := this.GetInt("pagesize", 10)
+	if err != nil {
+		pagesize = 10
+	}
+	//调用数据库方法，查询出留言的数据集
+	ms, err := models.QueryPageMessagesByNoteKey("", pageno, pagesize)
+	if err != nil {
+		this.Abort500(syserror.New("查询失败", err))
+	}
+	this.JsonOkH("查询成功", H{"data": ms})
+}

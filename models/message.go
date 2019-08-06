@@ -17,3 +17,11 @@ func SaveMessage(message *Message) error {
 func QueryMessagesByNoteKey(noteKey string) (ms []*Message, err error) {
 	return ms, db.Preload("User").Where("note_key = ?", noteKey).Order("updated_at desc").Find(&ms).Error
 }
+
+func QueryMessagesCountByNoteKey(noteKey string) (count int, err error) {
+	return count, db.Model(&Message{}).Where("note_key = ?", noteKey).Count(&count).Error
+}
+
+func QueryPageMessagesByNoteKey(notekey string, pageno, pagesize int) (ms []*Message, err error) {
+	return ms, db.Preload("User").Where("note_key = ?", notekey).Offset((pageno - 1) * pagesize).Limit(pagesize).Order("updated_at desc").Find(&ms).Error
+}

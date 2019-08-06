@@ -17,11 +17,51 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl', 'sysn'], functio
 
     //statr 分页
 
-    laypage.render({
-        elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
-        , count: 50 //数据总数，从服务端得到
-        , theme: '#1e9fff'
-    });
+    //statr 分页
+    if ($("#test1").size() > 0) {
+        var count = 0;
+        $.ajax({
+            url: "/message/count",
+            type: "GET",
+            async: false,
+            success: function (ret) {
+                count = ret.count;
+            },
+            error: function () {
+                layer.msg("网络异常")
+            }
+        });
+        laypage.render({
+            elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+            , count: count //数据总数，从服务端得到
+            , theme: '#1e9fff'
+            , limit: 5
+            , jump: function (obj, first) {
+                if (count <= 0) {
+                    return
+                }
+                //查询留言的路径为 /message/query
+                $.get("/message/query", {pageno: obj.curr, limit: obj.limit}, function (ret) {
+                    if (ret.code === 0) {
+                        //循环后台返回的留言列表，拼出html页面
+                        let datas = ret.data;
+                        let html = "";
+                        for (var i = 0; i < datas.length; i++) {
+                            //拼页面
+                            html += drawMessage(datas[i]);
+                        }
+                        let $html = $(html);
+                        $("#LAY-msg-box").html($html);
+                    } else {
+                        layer.msg(ret.msg)
+                    }
+                }).error(function () {
+                    layer.msg("网络异常！");
+                });
+            }
+        });
+    }
+    // end 分頁
 
     // end 分頁
 
@@ -128,23 +168,16 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl', 'sysn'], functio
         $.post("message/new", {content: content}, function (ret) {
             if (ret.code === 0) {
                 //新增成功，画页面
-               var html = drawMessage(ret.data);
-               $('#LAY-msg-box').prepend(html);
-               elemCont.val('');
-               layer.msg()
-
-                //模板渲染
-                laytpl(view).render(data, function (html) {
-                    $('#LAY-msg-box').prepend(html);
-                    elemCont.val('');
-                    layer.msg('留言成功', {
-                        icon: 1
-                    })
+                var html = drawMessage(ret.data);
+                $('#LAY-msg-box').prepend(html);
+                elemCont.val('');
+                layer.msg('留言成功', {
+                    icon: 1
                 });
-            }else{
+            } else {
                 layer.msg(ret.msg)
             }
-        }).error(function(){
+        }).error(function () {
             layer.msg("网络异常")
         });
 
@@ -155,8 +188,8 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl', 'sysn'], functio
         var view = $('#LAY-msg-tpl').html()
             //模拟数据
             , data = {
-                username: message.user.name
-                , avatar: message.avatar || '/static/images/info-img.png'
+                username: message.user.Name
+                , avatar: message.user.Avatar || '/static/img/info-img.png'
                 , praise: message.praise
                 , content: message.content
                 , key: message.key
