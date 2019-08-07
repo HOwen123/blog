@@ -40,7 +40,7 @@ func init() {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&User{}, &Note{}, &Message{})
+	db.AutoMigrate(&User{}, &Note{}, &Message{}, &PraiseLog{})
 	//如果数据库里面没用用户数据，我们新增一条admin记录
 	var count int
 	if err := db.Model(&User{}).Count(&count).Error; err == nil && count == 0 {

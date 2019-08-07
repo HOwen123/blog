@@ -1,9 +1,8 @@
 package syserror
 
 type NoUserError struct {
-	UnknowError
+	UnKnowError
 }
-
 
 func (this NoUserError) Code() int {
 	return 1001

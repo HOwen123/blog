@@ -7,5 +7,5 @@ type Error interface {
 }
 
 func New(msg string, reason error) Error {
-	return UnknowError{msg: msg, reason: reason}
+	return UnKnowError{msg: msg, reason: reason}
 }

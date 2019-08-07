@@ -2,4 +2,11 @@
     <h3><a href="/details/{{.Key}}">{{.Title}}</a></h3>
     <h5>发布于：<span>{{date .UpdatedAt "Y-m-d H:i:s"}}</span></h5>
     <p>{{str2html .Content}}</p>
+    <div class="count layui-clear">
+        <span class="pull-left">阅读 <em>100000+</em></span>
+        <span class="pull-right like" data-type="note" data-key="{{.Key}}">
+            <i class="layui-icon layui-icon-praise"></i>
+            <em class="value">{{.Praise}}</em>
+        </span>
+    </div>
 </div>

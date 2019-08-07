@@ -22,18 +22,21 @@
             </div>
             <div id="LAY-msg-box">
                 {{range .messages}}
-                <div class="info-item">
-                    <img class="info-img" src="/static/img/info-img.png" alt="">
-                    <div class="info-text">
-                        <p class="title count">
-                            <span class="name">{{.User.Name}}</span>
-                            <span class="info-img like"><i class="layui-icon layui-icon-praise"></i>{{.Praise}}</span>
-                        </p>
-                        <p class="info-intr">
-                        {{.Content}}
-                        </p>
+                    <div class="info-item">
+                        <img class="info-img" src="/static/img/info-img.png" alt="">
+                        <div class="info-text">
+                            <p class="title count">
+                                <span class="name">{{.User.Name}}</span>
+                                <span class="info-img like" data-type="message" data-key="{{.Key}}">
+                                <i class="layui-icon layui-icon-praise"></i>
+                                {{.Praise}}
+                            </span>
+                            </p>
+                            <p class="info-intr">
+                                {{.Content}}
+                            </p>
+                        </div>
                     </div>
-                </div>
                 {{end}}
             </div>
         </div>
@@ -50,8 +53,8 @@
         //用户必须登陆
         // 登陆的用户的role必须为0，可以修改文章
         //登陆的用户的id,必须等于当前文章详情页的文章所属用户的id
-        console.log("用户："+user.id);
-        console.log("笔记："+note.userId);
+        console.log("用户：" + user.id);
+        console.log("笔记：" + note.userId);
         if (user && user.id > 0 && user.Role === 0 && user.id === note.userId) {
             util.fixbar({
                     bar1: '&#xe642;',//编辑的图标
@@ -63,20 +66,20 @@
                         }
                         if (type === 'bar2') {
                             //删除逻辑
-                            $.post("note/del/"+note.key,function (data){
-                                if (data.code === 0){
+                            $.post("note/del/" + note.key, function (data) {
+                                if (data.code === 0) {
                                     layer.msg("删除成功");
-                                    if (data.action){
-                                        setTimeout(function (){
+                                    if (data.action) {
+                                        setTimeout(function () {
                                             window.location.href = data.action;
-                                        },300);
+                                        }, 300);
                                     }
-                                } else{
-                                    layer.msg("删除失败："+data.msg)
+                                } else {
+                                    layer.msg("删除失败：" + data.msg)
                                 }
 
-                            },"json").error(function(){
-                               layer.msg("网络异常")
+                            }, "json").error(function () {
+                                layer.msg("网络异常")
                             });
                         }
                     }

@@ -51,6 +51,7 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl', 'sysn'], functio
                             html += drawMessage(datas[i]);
                         }
                         let $html = $(html);
+                        $html.find(".like").on("click",praise);
                         $("#LAY-msg-box").html($html);
                     } else {
                         layer.msg(ret.msg)
@@ -125,25 +126,49 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl', 'sysn'], functio
     }
 
     $(function () {
-        $(".like").on('click', function () {
-
-            if (!($(this).hasClass("layblog-this"))) {
-                this.text = '已赞';
-                $(this).addClass('layblog-this');
-                $.tipsBox({
-                    obj: $(this),
-                    str: "+1",
-                    callback: function () {
-                    }
-                });
-                niceIn($(this));
-                layer.msg('点赞成功', {
-                    icon: 6
-                    , time: 1000
-                })
-            }
-        });
+        $(".like").on('click', praise);
     });
+
+    function praise() {
+        if (!($(this).hasClass("layblog-this"))) {
+            //取details.html中,定义好的data-type的值
+            var type = $(this).data("type");
+            //取details.html中定义好的data-key的值
+            var key = $(this).data("key");
+            this
+            that = this;
+            $.post("/praise/" + type + "/" + key, function (data) {
+                if (data.code == 0) {
+                    //如果点赞成功的逻辑
+                    that.text = '已赞';
+                    $(that).addClass("layblog-this");
+                    $.tipsBox({
+                        obj: $(that),
+                        str: "+1",
+                        callback: function () {
+
+                        }
+                    });
+                    niceIn($(that));
+                    layer.msg('点赞成功', {
+                        icon: 6,
+                        time: 1000
+                    });
+                    $(that).find(".value").text(data.praise)
+                } else {
+                    if (data.code === 4444) {
+                        // 将点过赞的样式添加到点赞按钮上去
+                        $(that).addClass('layblog-this');
+                        layer.msg(data.msg);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            }).error(function(){
+                layer.msg("网络异常！")
+            });
+        }
+    }
 
     //end 评论的特效
 
@@ -168,7 +193,9 @@ layui.define(['element', 'form', 'laypage', 'jquery', 'laytpl', 'sysn'], functio
         $.post("message/new", {content: content}, function (ret) {
             if (ret.code === 0) {
                 //新增成功，画页面
-                var html = drawMessage(ret.data);
+                let html = drawMessage(ret.data);
+                let $html = $(html);
+                $html.find(".like").on("click",praise());
                 $('#LAY-msg-box').prepend(html);
                 elemCont.val('');
                 layer.msg('留言成功', {
